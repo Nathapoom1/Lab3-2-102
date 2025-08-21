@@ -113,7 +113,6 @@ FROM Categories c JOIN Products p ON c.CategoryID = p.CategoryID
                   JOIN [Order Details] od ON p.ProductID = od.ProductID
 GROUP BY c.CategoryID, c.CategoryName;
 
-
 -- 15.  จงแสดงชื่อบริษัทลูกค้า ที่อยู่ในเมือง London , Cowes ที่สั่งซื้อสินค้าประเภท Seafood จากบริษัทตัวแทนจำหน่ายที่อยู่ในประเทศญี่ปุ่นรวมมูลค่าออกมาเป็นเงินด้วย
 SELECT c.CompanyName, c.City,ca.CategoryName,s.CompanyName AS Supplier,
 CAST(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS DECIMAL(18,2)) AS TotalSales
@@ -147,9 +146,8 @@ GROUP BY e.FirstName, e.LastName, c.CompanyName, c.ContactName, c.Phone, c.Fax;
 -- 18.  จงแสดงข้อมูลว่า วันที่  3 มิถุนายน 2541 พนักงานแต่ละคน ขายสินค้า ได้เป็นยอดเงินเท่าใด พร้อมทั้งแสดงชื่อคนที่ไม่ได้ขายของด้วย
 SELECT e.FirstName + ' ' + e.LastName AS EmployeeFullName,
 ISNULL(CAST(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS DECIMAL(18,2)), 0) AS TotalSales
-FROM Employees e 
-LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND CONVERT(date, o.OrderDate) = '1998-06-03'
-LEFT JOIN [Order Details] od ON o.OrderID = od.OrderID
+FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND CONVERT(date, o.OrderDate) = '1998-06-03'
+                 LEFT JOIN [Order Details] od ON o.OrderID = od.OrderID
 GROUP BY e.FirstName, e.LastName;
 
 -- 19.  จงแสดงรหัสรายการสั่งซื้อ ชื่อพนักงาน ชื่อบริษัทลูกค้า เบอร์โทร วันที่ลูกค้าต้องการสินค้า เฉพาะรายการที่มีพนักงานชื่อมากาเร็ตเป็นคนรับผิดชอบพร้อมทั้งแสดงยอดเงินรวมที่ลูกค้าต้องชำระด้วย (ทศนิยม 2 ตำแหน่ง)
@@ -162,11 +160,10 @@ WHERE e.FirstName = 'Margaret'
 GROUP BY o.OrderID, e.FirstName, e.LastName, c.CompanyName, c.Phone, o.RequiredDate;
 
 -- 20.  จงแสดงชื่อเต็มพนักงาน อายุงานเป็นปี และเป็นเดือน ยอดขายรวมที่ขายได้ เลือกมาเฉพาะลูกค้าที่อยู่ใน USA, Canada, Mexico และอยู่ในไตรมาศแรกของปี 2541SELECT e.FirstName, e.LastName, c.CompanyName, o.OrderDate, o.ShipCountry
-SELECT e.FirstName + ' ' + e.LastName AS EmployeeName,
-DATEDIFF(YEAR, e.HireDate, '1998-03-31') AS YearsOfService,
-DATEDIFF(MONTH, e.HireDate, '1998-03-31') % 12 AS MonthsOfService,
+SELECT e.FirstName + ' ' + e.LastName AS EmployeeName,DATEDIFF(YEAR, e.HireDate, '1998-03-31') AS YearsOfService,DATEDIFF(MONTH, e.HireDate, '1998-03-31') % 12 AS MonthsOfService,
 CAST(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS DECIMAL(18,2)) AS TotalSales
 FROM Employees e JOIN Orders o ON e.EmployeeID = o.EmployeeID
                  JOIN [Order Details] od ON o.OrderID = od.OrderID
 WHERE YEAR(o.OrderDate) = 1998 AND DATEPART(QUARTER, o.OrderDate) = 1 AND o.ShipCountry IN ('USA','Canada','Mexico')
 GROUP BY e.FirstName, e.LastName, e.HireDate;
+
